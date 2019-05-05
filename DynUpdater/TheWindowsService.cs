@@ -64,7 +64,6 @@ namespace DynUpdater
 			{
 				var data = webClient.DownloadString($"https://updates.opendns.com/nic/update?hostname={host}");
 				Logger.WriteLine(data);
-				File.AppendAllText("C:\\Temp\\log.txt", DateTime.Now + " " + data);
 				if (data.ToLowerInvariant().StartsWith("good "))
 				{
 					// remember IP
