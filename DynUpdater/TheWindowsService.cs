@@ -46,7 +46,7 @@ namespace DynUpdater
 				ip = webClient1.DownloadString("https://api.ipify.org/");
 				if (ip == lastIp)
 				{
-					Console.WriteLine($"No update needed. IP = {ip}");
+					Logger.WriteLine($"No update needed. IP = {ip}");
 					return;
 				}
 			}
@@ -54,20 +54,27 @@ namespace DynUpdater
 			var utf8 = new UTF8Encoding(false, false);
 			var user = Settings.Default.User;
 			var password = Settings.Default.Password;
-			var net = Settings.Default.Host;
+			var host = Settings.Default.Host;
 			var cred = user + ":" + password;
 			cred = Convert.ToBase64String(utf8.GetBytes(cred));
 
 			var webClient = new WebClient();
 			webClient.Headers[HttpRequestHeader.Authorization] = " Basic " + cred;
-			var data = webClient.DownloadString($"https://updates.opendns.com/nic/update?hostname={net}");
-			Console.WriteLine(data);
-			File.AppendAllText("C:\\Temp\\log.txt", DateTime.Now + " " + data);
-			if (data.ToLowerInvariant().StartsWith("good "))
+			try
 			{
-				// remember IP
-				Console.WriteLine("IP remembered: " + ip);
-				lastIp = ip;
+				var data = webClient.DownloadString($"https://updates.opendns.com/nic/update?hostname={host}");
+				Logger.WriteLine(data);
+				File.AppendAllText("C:\\Temp\\log.txt", DateTime.Now + " " + data);
+				if (data.ToLowerInvariant().StartsWith("good "))
+				{
+					// remember IP
+					Logger.WriteLine("IP remembered: " + ip);
+					lastIp = ip;
+				}
+			}
+			catch (Exception ex)
+			{
+				Logger.WriteLine(ex.GetType().Name + " " + ex.Message);
 			}
 		}
 
