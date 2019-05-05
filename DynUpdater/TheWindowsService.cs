@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DynUpdater.Properties;
+using System;
 using System.IO;
 using System.Net;
 using System.ServiceProcess;
@@ -14,7 +15,6 @@ namespace DynUpdater
 			InitializeComponent();
 		}
 
-		string[] _args;
 		protected override void OnStart(string[] args)
 		{
 			// TODO: Add code here to start your service.
@@ -31,7 +31,6 @@ namespace DynUpdater
 
 		public void StartImpl(string[] args)
 		{
-			_args = args;
 
 			_timer = new Timer(Worker, null, 1, 5 * 60 * 1000);
 		}
@@ -47,15 +46,15 @@ namespace DynUpdater
 				ip = webClient1.DownloadString("https://api.ipify.org/");
 				if (ip == lastIp)
 				{
-					Console.WriteLine($"No update neede. IP = {ip}");
+					Console.WriteLine($"No update needed. IP = {ip}");
 					return;
 				}
 			}
 
 			var utf8 = new UTF8Encoding(false, false);
-			var user = _args[1];
-			var password = _args[2];
-			var net = _args[3];
+			var user = Settings.Default.User;
+			var password = Settings.Default.Password;
+			var net = Settings.Default.Host;
 			var cred = user + ":" + password;
 			cred = Convert.ToBase64String(utf8.GetBytes(cred));
 
