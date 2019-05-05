@@ -39,29 +39,30 @@ namespace DynUpdater
 
 		private void Worker(object state)
 		{
-			// get ip
-			string ip;
-			using(var webClient1 = new WebClient())
-			{
-				ip = webClient1.DownloadString("https://api.ipify.org/");
-				if (ip == lastIp)
-				{
-					Logger.WriteLine($"No update needed. IP = {ip}");
-					return;
-				}
-			}
-
-			var utf8 = new UTF8Encoding(false, false);
-			var user = Settings.Default.User;
-			var password = Settings.Default.Password;
-			var host = Settings.Default.Host;
-			var cred = user + ":" + password;
-			cred = Convert.ToBase64String(utf8.GetBytes(cred));
-
-			var webClient = new WebClient();
-			webClient.Headers[HttpRequestHeader.Authorization] = " Basic " + cred;
 			try
 			{
+				// get ip
+				string ip;
+				using (var webClient1 = new WebClient())
+				{
+					ip = webClient1.DownloadString("https://api.ipify.org/");
+					if (ip == lastIp)
+					{
+						Logger.WriteLine($"No update needed. IP = {ip}");
+						return;
+					}
+				}
+
+				var utf8 = new UTF8Encoding(false, false);
+				var user = Settings.Default.User;
+				var password = Settings.Default.Password;
+				var host = Settings.Default.Host;
+				var cred = user + ":" + password;
+				cred = Convert.ToBase64String(utf8.GetBytes(cred));
+
+				var webClient = new WebClient();
+				webClient.Headers[HttpRequestHeader.Authorization] = " Basic " + cred;
+
 				var data = webClient.DownloadString($"https://updates.opendns.com/nic/update?hostname={host}");
 				Logger.WriteLine(data);
 				if (data.ToLowerInvariant().StartsWith("good "))
