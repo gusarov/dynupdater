@@ -61,7 +61,7 @@ namespace DynUpdater
 				cred = Convert.ToBase64String(utf8.GetBytes(cred));
 
 				var webClient = new WebClient();
-				webClient.Headers[HttpRequestHeader.Authorization] = " Basic " + cred;
+				webClient.Headers[HttpRequestHeader.Authorization] = "Basic " + cred;
 
 				var data = webClient.DownloadString($"https://updates.opendns.com/nic/update?hostname={host}");
 				Logger.WriteLine(data);
